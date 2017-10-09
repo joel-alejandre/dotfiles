@@ -1,6 +1,9 @@
 # see https://www.topbug.net/blog/2013/04/14/install-and-use-gnu-command-line-tools-in-mac-os-x/
 # Attribution: https://gist.github.com/xuhdev/8b1b16fb802f6870729038ce3789568f
 
+# core (export PATH="$(brew --prefix coreutils)/libexec/gnubin:/usr/local/bin:$PATH")
+brew install coreutils
+
 # key commands
 brew install binutils
 brew install diffutils
@@ -28,6 +31,7 @@ brew install make
 # Other commands (non-GNU)
 brew install file-formula
 brew install git
+brew install python
 brew install less
 brew install rsync
 brew install svn

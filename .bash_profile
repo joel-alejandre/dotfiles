@@ -31,6 +31,7 @@
 #   export PATH="/usr/local/bin:$PATH"
 #   export PATH="/usr/local/sbin:$PATH"
 #   export PATH="/usr/local/git/bin:/sw/bin/:/usr/local/bin:/usr/local/:/usr/local/sbin:/usr/local/mysql/bin:$PATH"
+    export PATH="$(brew --prefix coreutils)/libexec/gnubin:$PATH"
 #
 #   Set Default Editor (change 'Nano' to the editor of your choice)
 #   ------------------------------------------------------------
@@ -104,9 +105,7 @@ ql () { qlmanage -p "$*" >& /dev/null; }    # ql:           Opens any file in Ma
 alias DT='tee ~/Desktop/terminalOut.txt'    # DT:           Pipe content to file on MacOS Desktop
 alias nload='nload -u M'                    # nload:        Sets nload default filesize to MB
 #alias keepass='sudo mono /Users/joel/.key/KeePass.exe'  # keepass   runs keepass in mono
-alias shred='gshred -vzu'                    # shred          Sets default to 'shred'
-#alias python='python3'
-#alias pip='pip3'
+alias shred='shred -vzu'                    # shred          Sets default to 'shred'
 
 #   lr:  Full Recursive Directory Listing
 #   ------------------------------------------
