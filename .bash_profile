@@ -2,6 +2,8 @@
 #
 #  Description:  This file holds all my BASH configurations and aliases
 #
+#  Attribution : https://gist.github.com/natelandau/10654137
+#
 #  Sections:
 #  0.   Environment Configuration
 #  1.   Python Environment Configuration
