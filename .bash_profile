@@ -32,6 +32,7 @@
 #   export PATH="/usr/local/sbin:$PATH"
 #   export PATH="/usr/local/git/bin:/sw/bin/:/usr/local/bin:/usr/local/:/usr/local/sbin:/usr/local/mysql/bin:$PATH"
     export PATH="$(brew --prefix coreutils)/libexec/gnubin:$PATH"
+    export MANPATH="$(brew --prefix coreutils)/libexec/gnuman:$MANPATH"
 #
 #   Set Default Editor (change 'Nano' to the editor of your choice)
 #   ------------------------------------------------------------
@@ -261,7 +262,7 @@ alias ping='ping -c 5'                              # ping:         Sets count l
 #   7.  SYSTEMS OPERATIONS & INFORMATION
 #   ---------------------------------------
 
-alias mountReadWrite='/sbin/mount -uw /'    # mountReadWrite:   For use when booted into single-user
+    alias mountReadWrite='/sbin/mount -uw /'    # mountReadWrite:   For use when booted into single-user
 
 #   cleanupDS:  Recursively delete .DS_Store files
 #   -------------------------------------------------------------------
