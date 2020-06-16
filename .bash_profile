@@ -21,22 +21,33 @@
 #   0.  ENVIRONMENT CONFIGURATION
 #   -------------------------------
 
+#   Set Colors
+    # COLORS \e[<prefix>;<color>m;<decoration> http://jonasjacek.github.io/colors
+    TEAL="\[\e[38;5;6m\]\]"
+    YELLOW="\[\e[38;5;11m\]"
+    MAGENTA="\[\e[38;5;13m\]"
+    GREEN="\[\e[38;5;40m\]"
+    NONE="\[\e[0m\]"
+
 #   Change Prompt
 #   ------------------------------------------------------------
-    export PS1="_____________________________________________________\n| \w @ \h (\u) \n| => "
-    export PS2="| => "
+#   export PS1="_____________________________________________________\n| \w @ \h (\u) \n| => "
+#   export PS2="| => "
 
 #   Set Paths
 #   ------------------------------------------------------------
-#   export PATH="/usr/local/bin:$PATH"
 #   export PATH="/usr/local/sbin:$PATH"
 #   export PATH="/usr/local/git/bin:/sw/bin/:/usr/local/bin:/usr/local/:/usr/local/sbin:/usr/local/mysql/bin:$PATH"
-    export PATH="$(brew --prefix coreutils)/libexec/gnubin:$PATH"
+#   Default to brew-installed g* utils
+    export PATH="$(brew --prefix coreutils)/libexec/gnubin:$(brew --prefix findutils)/libexec/gnubin:$PATH"
+    export PATH="$(brew --prefix)/bin:$PATH"
     export MANPATH="$(brew --prefix coreutils)/libexec/gnuman:$MANPATH"
+
+    export PATH=$HOME/.toolbox/bin:$PATH
 #
 #   Set Default Editor (change 'Nano' to the editor of your choice)
 #   ------------------------------------------------------------
-#   export EDITOR=/usr/bin/subl
+    export EDITOR=/usr/local/bin/code
 
 #   Set default blocksize for ls, df, du
 #   from this: http://hints.macworld.com/comment.php?mode=view&cid=24491
@@ -47,8 +58,10 @@
 #   (this is all commented out as I use Mac Terminal Profiles)
 #   from http://osxdaily.com/2012/02/21/add-color-to-the-terminal-in-mac-os-x/
 #   ------------------------------------------------------------
-#   export CLICOLOR=1
+    export CLICOLOR=1
 #   export LSCOLORS=ExFxBxDxCxegedabagacad
+#   export LSCOLORS=gxegbxdxcxahadabafacge
+    export LSCOLORS=GxFxCxDxBxegedabagaced
 
 
 #   -------------------------------
@@ -57,21 +70,61 @@
 
 #   Set virtualwrapper paths and pip override for global install (gpip)
 #   ------------------------------------------------------------
-    export WORKON_HOME=$HOME/.virtualenvs
-    export PROJECT_HOME=$HOME/Documents/Scripts
-    export VIRTUALENVWRAPPER_PYTHON=/usr/local/bin/python3
+#   export WORKON_HOME=$HOME/.virtualenvs
+#   export PROJECT_HOME=$HOME/Documents/Scripts
+#   export VIRTUALENVWRAPPER_PYTHON=/usr/local/bin/python3
 
-    source `which virtualenvwrapper.sh`
+#    source `which virtualenvwrapper.sh`
 
     export PIP_REQUIRE_VIRTUALENV=true
 
     gpip() {
-        PIP_REQUIRE_VIRTUALENV="" pip3 "$@"
+        PIP_REQUIRE_VIRTUALENV="" pip "$@"
     }
+
+    # # >>> conda initialize >>>
+    # #!! Contents within this block are managed by 'conda init' !!
+    # export CONDA_AUTO_ACTIVATE_BASE=false
+    # __conda_setup="$('/Users/jdalej/miniconda3/bin/conda' 'shell.bash' 'hook' 2> /dev/null)"
+    # if [ $? -eq 0 ]; then
+    #     eval "$__conda_setup"
+    # else
+    #     if [ -f "/Users/jdalej/miniconda3/etc/profile.d/conda.sh" ]; then
+    #         . "/Users/jdalej/miniconda3/etc/profile.d/conda.sh"
+    #     else
+    #         export PATH="/Users/jdalej/miniconda3/bin:$PATH"
+    #     fi
+    # fi
+
+    # unset __conda_setup
+    # # <<< conda initialize <<<
+
+    # Setup pyenv for 10.14 workaround
+    if [ "$(sw_vers -productVersion | cut -c -5)" == "10.14" ]; then
+        export SDKROOT=/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.14.sdk
+        export MACOSX_DEPLOYMENT_TARGET=10.14
+    fi
+
+    pyenv() {
+    if [ "$1" = "install" ]; then
+        PYTHON_CONFIGURE_OPTS="--enable-framework" pyenv "$@"
+    else
+        command pyenv "$@"
+    fi
+    }
+
+    # Setup pyenv init to use 'shell'
+    if command -v pyenv 1>/dev/null 2>&1; then
+        eval "$(pyenv init -)"
+        export -f pyenv
+    #   pyenv virtualenvwrapper
+    fi
+
+
 
 #   Set virtualwrapper to auto 'workon' if .venv file is in dir with valid env name
 #   ------------------------------------------------------------
-    source `which auto_venv.sh`
+#    source `which auto_venv.sh`
 
 #   -----------------------------
 #   2.  MAKE TERMINAL BETTER
@@ -91,7 +144,7 @@ alias .3='cd ../../../'                     # Go back 3 directory levels
 alias .4='cd ../../../../'                  # Go back 4 directory levels
 alias .5='cd ../../../../../'               # Go back 5 directory levels
 alias .6='cd ../../../../../../'            # Go back 6 directory levels
-alias edit='subl'                           # edit:         Opens any file in sublime editor
+alias edit='code'                           # edit:         Opens any file in VS Code editor
 alias f='open -a Finder ./'                 # f:            Opens current directory in MacOS Finder
 alias ~="cd ~"                              # ~:            Go Home
 alias c='clear'                             # c:            Clear terminal display
@@ -105,8 +158,9 @@ trash () { command mv "$@" ~/.Trash ; }     # trash:        Moves a file to the 
 ql () { qlmanage -p "$*" >& /dev/null; }    # ql:           Opens any file in MacOS Quicklook Preview
 alias DT='tee ~/Desktop/terminalOut.txt'    # DT:           Pipe content to file on MacOS Desktop
 alias nload='nload -u M'                    # nload:        Sets nload default filesize to MB
-#alias keepass='sudo mono /Users/joel/.key/KeePass.exe'  # keepass   runs keepass in mono
-alias shred='shred -vzu'                    # shred          Sets default to 'shred'
+alias shred='shred -vzu'                    # shred:        Sets default to 'shred'
+alias brewuu="brew update && brew upgrade"  # brew:         Runs `brew update && brew upgrade`
+#alias pyenv install
 
 #   lr:  Full Recursive Directory Listing
 #   ------------------------------------------
@@ -231,7 +285,7 @@ ffe () { /usr/bin/find . -name '*'"$@" ; }  # ffe:      Find file whose name end
 #   6.  NETWORKING
 #   ---------------------------
 
-alias myip='curl https://ip.appspot.com'            # myip:         Public facing IP Address
+alias myip='curl https://icanhazip.com'            # myip:         Public facing IP Address
 alias netCons='lsof -i'                             # netCons:      Show all open TCP/IP sockets
 alias flushDNS='dscacheutil -flushcache'            # flushDNS:     Flush out the DNS Cache
 alias lsock='sudo /usr/sbin/lsof -i -P'             # lsock:        Display open sockets
@@ -282,20 +336,32 @@ alias ping='ping -c 5'                              # ping:         Sets count l
 #   -----------------------------------------------------------------------------------
     alias screensaverDesktop='/System/Library/Frameworks/ScreenSaver.framework/Resources/ScreenSaverEngine.app/Contents/MacOS/ScreenSaverEngine -background'
 
-# Setting PATH for Python 3.6
-# The original version is saved in .bash_profile.pysave
-#PATH="/Library/Frameworks/Python.framework/Versions/3.6/bin:${PATH}"
-#export PATH
-
 
 #   ---------------------------------------
 #   8.  MISC
 #   ---------------------------------------
-# Brew's bash-completion@2
-# Add tab completion for bash completion 2 | else regular bash completion
-if which brew > /dev/null && [ -f "$(brew --prefix)/share/bash-completion/bash_completion" ]; then
-  source "$(brew --prefix)/share/bash-completion/bash_completion";
-elif [ -f /etc/bash_completion ]; then
-  echo "/etc/bash_completion <-- check this"
-  source /etc/bash_completion;
-fi;
+# Brew's bash-completion
+export BASH_COMPLETION_COMPAT_DIR="$(brew --prefix)/etc/bash_completion.d"
+# Add tab completion for bash-completion@2
+[[ -r "/usr/local/etc/profile.d/bash_completion.sh" ]] && . "/usr/local/etc/profile.d/bash_completion.sh"
+
+# bash-Git-prompt
+if [ -f "$(brew --prefix bash-git-prompt)/share/gitprompt.sh" ]; then
+    __GIT_PROMPT_DIR="$(brew --prefix bash-git-prompt)/share"
+
+    GIT_PS1_SHOWCOLORHINTS=true
+    GIT_PS1_SHOWDIRTYSTATE=true
+    GIT_PS1_SHOWUNTRACKEDFILES=true
+    GIT_PS1_DESCRIBE_STYLE='default'
+
+    source "$(brew --prefix bash-git-prompt)/share/gitprompt.sh"
+fi
+
+    PROMPT_COMMAND='__git_ps1\
+                    "\n${MAGENTA}[\d \t] ${YELLOW}$(python --version 2>&1)${NONE}\
+                    \n${GREEN}\u@\h:${TEAL}\w${NONE}"\
+                    "\n${VIRTUAL_ENV:+($(basename ${VIRTUAL_ENV}))}\\$ "\
+                    " (%s)"'
+
+# Disable AWS-SAM telemetry
+export SAM_CLI_TELEMETRY=0
