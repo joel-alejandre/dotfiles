@@ -104,10 +104,20 @@
         export SDKROOT=/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.14.sdk
         export MACOSX_DEPLOYMENT_TARGET=10.14
     fi
+    if [ "$(sw_vers -productVersion | cut -c -5)" == "10.15" ]; then
+        export SDKROOT="/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk"
+        export MACOSX_DEPLOYMENT_TARGET=10.15
+    fi
 
+    # brew switch openssl@1.1
     pyenv() {
     if [ "$1" = "install" ]; then
+        CFLAGS="-I$(brew --prefix openssl)/include"
+        CPPFLAGS="-I$(brew --prefix openssl)/include"
+        LDFLAGS="-L$(brew --prefix openssl)/lib"
+        PYTHON_BUILD_HOMEBREW_OPENSSL_FORMULA="openssl@1.1"
         PYTHON_CONFIGURE_OPTS="--enable-framework" pyenv "$@"
+        CONFIGURE_OPTS="--with-openssl=$(brew --prefix openssl)" pyenv "$@"
     else
         command pyenv "$@"
     fi
@@ -160,6 +170,7 @@ alias DT='tee ~/Desktop/terminalOut.txt'    # DT:           Pipe content to file
 alias nload='nload -u M'                    # nload:        Sets nload default filesize to MB
 alias shred='shred -vzu'                    # shred:        Sets default to 'shred'
 alias brewuu="brew update && brew upgrade"  # brew:         Runs `brew update && brew upgrade`
+alias activate="source .*env/bin/activate"  # activate:     Sources python env in `.*env`
 #alias pyenv install
 
 #   lr:  Full Recursive Directory Listing
@@ -285,7 +296,7 @@ ffe () { /usr/bin/find . -name '*'"$@" ; }  # ffe:      Find file whose name end
 #   6.  NETWORKING
 #   ---------------------------
 
-alias myip='curl https://icanhazip.com'            # myip:         Public facing IP Address
+alias myip='curl https://checkip.amazonaws.com'     # myip:         Public facing IP Address
 alias netCons='lsof -i'                             # netCons:      Show all open TCP/IP sockets
 alias flushDNS='dscacheutil -flushcache'            # flushDNS:     Flush out the DNS Cache
 alias lsock='sudo /usr/sbin/lsof -i -P'             # lsock:        Display open sockets
@@ -364,4 +375,9 @@ fi
                     " (%s)"'
 
 # Disable AWS-SAM telemetry
-export SAM_CLI_TELEMETRY=0
+export SAM_CLI_TELEMETRY
+
+test -e "${HOME}/.iterm2_shell_integration.bash" && source "${HOME}/.iterm2_shell_integration.bash"
+
+# point to java sdk for spark
+# sudo ln -sfn /usr/local/opt/openjdk@11/libexec/openjdk.jdk /Library/Java/JavaVirtualMachines/openjdk-11.jdk
